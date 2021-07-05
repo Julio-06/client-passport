@@ -30,4 +30,8 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'apiPassport' =>[
+        'client_id' => env('APIPASSPORT_CLIENT_ID'),
+        'client_secret' => env('APIPASSPORT_CLIENT_SECRET'),
+    ]
 ];

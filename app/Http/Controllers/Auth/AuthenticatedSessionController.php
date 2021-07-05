@@ -70,8 +70,8 @@ class AuthenticatedSessionController extends Controller
                 'Accept' => 'application/json'
             ])->post('http://passport.test/oauth/token', [
                 'grant_type' => 'password',
-                'client_id' => '93d0f5c2-72de-4684-a208-30896f2ef907',
-                'client_secret' => 'VoSwBK1wZBB9vW3SYEaIHSbjJBYOK3nMSiE44A7l',
+                'client_id' => config('services.apiPassport.client_id'),
+                'client_secret' => config('services.apiPassport.client_secret'),
                 'username' => $request->email,
                 'password' => $request->password
             ]);
@@ -85,7 +85,6 @@ class AuthenticatedSessionController extends Controller
                 'expires_at' => now()->addSecond($token['expires_in']),
             ]);
 
-            dd($token);
         }
 
         Auth::login($user, $request->remember);

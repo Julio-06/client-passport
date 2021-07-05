@@ -10,9 +10,11 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 use Illuminate\Support\Facades\Http;
+use App\Traits\Token;
 
 class AuthenticatedSessionController extends Controller
 {
+    use Token;
     /**
      * Display the login view.
      *
@@ -66,25 +68,7 @@ class AuthenticatedSessionController extends Controller
         //VALIDAMOS SI EL USUARIO CUANTA CON UN ACCESS_TOKEN SI RETORNA NULL SE CONSIDERA FALSO Y ENTRA EN LA CONDICIONAL
         if(!$user->accessToken){
             //LUEGO DE VALIDAR QUE EL USUARIO EXISTE REALIZAMOS OTRA PETICIÓN PARA OBTENER UN TOKEN
-            $response =  Http::withHeaders([
-                'Accept' => 'application/json'
-            ])->post('http://passport.test/oauth/token', [
-                'grant_type' => 'password',
-                'client_id' => config('services.apiPassport.client_id'),
-                'client_secret' => config('services.apiPassport.client_secret'),
-                'username' => $request->email,
-                'password' => $request->password
-            ]);
-
-            $token = $response->json();
-
-            $user->accessToken()->create([
-                'service_id' => $service['data']['id'],
-                'access_token' => $token['access_token'],
-                'refresh_token' => $token['refresh_token'],
-                'expires_at' => now()->addSecond($token['expires_in']),
-            ]);
-
+            $this->getAccessToken($user, $service);
         }
 
         Auth::login($user, $request->remember);
